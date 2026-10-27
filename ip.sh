@@ -1492,6 +1492,7 @@ netflix[ustatus]="${smedia[no]}"
 netflix[uregion]="${smedia[nodata]}"
 netflix[utype]="${smedia[nodata]}"
 }
+youtube_content_region(){ printf '%s' "$1"|sed -n 's/.*"contentRegion":"\([^"]*\)".*/\1/p'; }
 function MediaUnlockTest_YouTube_Premium(){
 local temp_info="$Font_Cyan$Font_B${sinfo[media]}${Font_I}Youtube $Font_Suffix"
 ((ibar_step+=3))
@@ -1510,15 +1511,14 @@ youtube[uregion]="${smedia[nodata]}"
 youtube[utype]="${smedia[nodata]}"
 return
 fi
-local isCN=$(echo $tmpresult|grep 'www.google.cn')
-if [ -n "$isCN" ];then
+local region=$(youtube_content_region "$tmpresult")
+if [[ "$region" == "CN" ]];then
 youtube[ustatus]="${smedia[cn]}"
 youtube[uregion]="  $Font_Red[CN]$Font_Green   "
 youtube[utype]="${smedia[nodata]}"
 return
 fi
 local isNotAvailable=$(echo $tmpresult|grep 'Premium is not available in your country')
-local region=$(echo $tmpresult|sed -n 's/.*"contentRegion":"\([^"]*\)".*/\1/p')
 local isAvailable=$(echo $tmpresult|grep 'ad-free')
 if [ -n "$isNotAvailable" ];then
 youtube[ustatus]="${smedia[noprem]}"
